@@ -1,0 +1,76 @@
+syms x
+f(x) = x^2 - sin(x)- 0.5;
+a = input('Escriba el valor inicial del intervalo: ');
+b = input('Escriba el valor final del intervalo: ');
+
+ezplot(f);
+hold on;
+line([-10 10], [0 0],'color','r')%Pinto la linea de abscisas  
+
+%Comprobamos el teorema de Bolzano
+if sign(subs(f, a))~= sign(subs(f, b))
+    
+    %Pedimos el resto de datos
+    tolerancia = input('Escriba la tolerancia: ');
+    errorfun = input('Escribe el error de la funcion: ');
+    maxIter = input('Escriba el número máximo de Iteraciones: ');
+
+    %Me devuelve x tal que f(x) = 0
+    Resultado = Falsi(f, a, b, tolerancia, errorfun, maxIter); 
+    disp(Resultado); 
+
+    %Pinto el punto para ver si es correcto
+    plot(Resultado, double(subs(f,Resultado)), 'm*');
+    
+else
+    disp('No es posible hallar el resultado con este método.');
+end;
+
+function raiz = Falsi(f, a, b, tolerancia, errorfun, maxIter)
+    i = 0;
+    salir = false;
+    
+    %Bucle de iteraciones
+    while i < maxIter && salir ~= true 
+        
+        %Incrementamos la iteración
+        i = i + 1;
+        
+        %Calculamos f(a) y f(b)
+        fa = double(subs(f,a));
+        fb = double(subs(f,b));
+        
+        if abs(fa) > abs(fb)
+            %Intercambiamos a por b
+            auxiliar = a;
+            a = b;
+            b = auxiliar;
+            
+            %Calculamos f(a) y f(b)
+            fa = double(subs(f,a));
+            fb = double(subs(f,b));
+        end;
+        
+        h = (fa * (b-a)) / (fb - fa);
+        
+        %c = a-h;
+        c = a-h;
+        
+        %f(c);
+        fc = double(subs(f,c));
+        
+        if sign(fa)*sign(fc) < 0
+            b = c;
+        else
+            a = c;
+        end;
+        
+        %Comprobamos que el limite de tolerancia y el error no se traspasa
+        if double(abs(fc)) <= errorfun || double(abs(h)) <= tolerancia 
+            salir = true;
+        end
+    end
+    
+    %Finalizado el bucle guardamos el resultado en la variable de retorno
+    raiz = c;
+end

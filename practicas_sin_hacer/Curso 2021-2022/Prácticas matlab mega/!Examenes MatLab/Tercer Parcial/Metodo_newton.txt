@@ -1,0 +1,33 @@
+﻿syms x
+f(x) = x^2 - sin(x)- 0.5;
+
+a = input('Escriba el valor inicial del método: ');
+tolerancia = input('Escriba la tolerancia: ');
+errorfun = input('Escribe el error de la funcion: ');
+maxIter = input('Escriba el número máximo de Iteraciones: ');
+
+ezplot(f)
+hold on
+
+Resultado = Newton(f, a, tolerancia, errorfun, maxIter); 
+disp(Resultado);
+plot(Resultado, double(subs(f,Resultado)), 'm*')
+
+function raiz = Newton(fun, a, tolerancia, errorfun, maxIter)
+    i = 0;
+    salir = false;
+    while i < maxIter && salir ~= true 
+
+        h = double(fun(a)/subs(diff(fun), a));
+
+        c = a-h;
+        i = i + 1;
+        a = c;
+
+        if abs(h) <= tolerancia || double(abs(subs(fun,c))) <= errorfun || double(abs(subs(fun,c))) == 0 
+            salir = true;
+        end
+    end
+    
+    raiz = a;
+end
